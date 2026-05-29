@@ -1,0 +1,584 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		5DC45E442FC3BB8D00A2FC74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DC45E2E2FC3BB8B00A2FC74 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DC45E352FC3BB8B00A2FC74;
+			remoteInfo = EQfi;
+		};
+		5DC45E4E2FC3BB8D00A2FC74 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DC45E2E2FC3BB8B00A2FC74 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5DC45E352FC3BB8B00A2FC74;
+			remoteInfo = EQfi;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5DC45E362FC3BB8B00A2FC74 /* EQfi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EQfi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DC45E432FC3BB8D00A2FC74 /* EQfiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EQfiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DC45E4D2FC3BB8D00A2FC74 /* EQfiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EQfiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5DC45E382FC3BB8B00A2FC74 /* EQfi */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = EQfi;
+			sourceTree = "<group>";
+		};
+		5DC45E462FC3BB8D00A2FC74 /* EQfiTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = EQfiTests;
+			sourceTree = "<group>";
+		};
+		5DC45E502FC3BB8D00A2FC74 /* EQfiUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = EQfiUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5DC45E332FC3BB8B00A2FC74 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DC45E402FC3BB8D00A2FC74 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DC45E4A2FC3BB8D00A2FC74 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5DC45E2D2FC3BB8B00A2FC74 = {
+			isa = PBXGroup;
+			children = (
+				5DC45E382FC3BB8B00A2FC74 /* EQfi */,
+				5DC45E462FC3BB8D00A2FC74 /* EQfiTests */,
+				5DC45E502FC3BB8D00A2FC74 /* EQfiUITests */,
+				5DC45E372FC3BB8B00A2FC74 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5DC45E372FC3BB8B00A2FC74 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5DC45E362FC3BB8B00A2FC74 /* EQfi.app */,
+				5DC45E432FC3BB8D00A2FC74 /* EQfiTests.xctest */,
+				5DC45E4D2FC3BB8D00A2FC74 /* EQfiUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5DC45E352FC3BB8B00A2FC74 /* EQfi */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DC45E572FC3BB8D00A2FC74 /* Build configuration list for PBXNativeTarget "EQfi" */;
+			buildPhases = (
+				5DC45E322FC3BB8B00A2FC74 /* Sources */,
+				5DC45E332FC3BB8B00A2FC74 /* Frameworks */,
+				5DC45E342FC3BB8B00A2FC74 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5DC45E382FC3BB8B00A2FC74 /* EQfi */,
+			);
+			name = EQfi;
+			packageProductDependencies = (
+			);
+			productName = EQfi;
+			productReference = 5DC45E362FC3BB8B00A2FC74 /* EQfi.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5DC45E422FC3BB8D00A2FC74 /* EQfiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DC45E5A2FC3BB8D00A2FC74 /* Build configuration list for PBXNativeTarget "EQfiTests" */;
+			buildPhases = (
+				5DC45E3F2FC3BB8D00A2FC74 /* Sources */,
+				5DC45E402FC3BB8D00A2FC74 /* Frameworks */,
+				5DC45E412FC3BB8D00A2FC74 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5DC45E452FC3BB8D00A2FC74 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5DC45E462FC3BB8D00A2FC74 /* EQfiTests */,
+			);
+			name = EQfiTests;
+			packageProductDependencies = (
+			);
+			productName = EQfiTests;
+			productReference = 5DC45E432FC3BB8D00A2FC74 /* EQfiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5DC45E4C2FC3BB8D00A2FC74 /* EQfiUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5DC45E5D2FC3BB8D00A2FC74 /* Build configuration list for PBXNativeTarget "EQfiUITests" */;
+			buildPhases = (
+				5DC45E492FC3BB8D00A2FC74 /* Sources */,
+				5DC45E4A2FC3BB8D00A2FC74 /* Frameworks */,
+				5DC45E4B2FC3BB8D00A2FC74 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5DC45E4F2FC3BB8D00A2FC74 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5DC45E502FC3BB8D00A2FC74 /* EQfiUITests */,
+			);
+			name = EQfiUITests;
+			packageProductDependencies = (
+			);
+			productName = EQfiUITests;
+			productReference = 5DC45E4D2FC3BB8D00A2FC74 /* EQfiUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5DC45E2E2FC3BB8B00A2FC74 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					5DC45E352FC3BB8B00A2FC74 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+					5DC45E422FC3BB8D00A2FC74 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 5DC45E352FC3BB8B00A2FC74;
+					};
+					5DC45E4C2FC3BB8D00A2FC74 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 5DC45E352FC3BB8B00A2FC74;
+					};
+				};
+			};
+			buildConfigurationList = 5DC45E312FC3BB8B00A2FC74 /* Build configuration list for PBXProject "EQfi" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5DC45E2D2FC3BB8B00A2FC74;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5DC45E372FC3BB8B00A2FC74 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5DC45E352FC3BB8B00A2FC74 /* EQfi */,
+				5DC45E422FC3BB8D00A2FC74 /* EQfiTests */,
+				5DC45E4C2FC3BB8D00A2FC74 /* EQfiUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5DC45E342FC3BB8B00A2FC74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DC45E412FC3BB8D00A2FC74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DC45E4B2FC3BB8D00A2FC74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5DC45E322FC3BB8B00A2FC74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DC45E3F2FC3BB8D00A2FC74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DC45E492FC3BB8D00A2FC74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5DC45E452FC3BB8D00A2FC74 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DC45E352FC3BB8B00A2FC74 /* EQfi */;
+			targetProxy = 5DC45E442FC3BB8D00A2FC74 /* PBXContainerItemProxy */;
+		};
+		5DC45E4F2FC3BB8D00A2FC74 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5DC45E352FC3BB8B00A2FC74 /* EQfi */;
+			targetProxy = 5DC45E4E2FC3BB8D00A2FC74 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5DC45E552FC3BB8D00A2FC74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		5DC45E562FC3BB8D00A2FC74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		5DC45E582FC3BB8D00A2FC74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EQfi/EQfi.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_DEBUG_DYLIB = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "EQfi-Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Imaginebowl.EQfi;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		5DC45E592FC3BB8D00A2FC74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = EQfi/EQfi.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_DEBUG_DYLIB = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "EQfi-Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Imaginebowl.EQfi;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		5DC45E5B2FC3BB8D00A2FC74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Imaginebowl.EQfiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EQfi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EQfi";
+			};
+			name = Debug;
+		};
+		5DC45E5C2FC3BB8D00A2FC74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Imaginebowl.EQfiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EQfi.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/EQfi";
+			};
+			name = Release;
+		};
+		5DC45E5E2FC3BB8D00A2FC74 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Imaginebowl.EQfiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = EQfi;
+			};
+			name = Debug;
+		};
+		5DC45E5F2FC3BB8D00A2FC74 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = GLDH2T9TP5;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Imaginebowl.EQfiUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = EQfi;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5DC45E312FC3BB8B00A2FC74 /* Build configuration list for PBXProject "EQfi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DC45E552FC3BB8D00A2FC74 /* Debug */,
+				5DC45E562FC3BB8D00A2FC74 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DC45E572FC3BB8D00A2FC74 /* Build configuration list for PBXNativeTarget "EQfi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DC45E582FC3BB8D00A2FC74 /* Debug */,
+				5DC45E592FC3BB8D00A2FC74 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DC45E5A2FC3BB8D00A2FC74 /* Build configuration list for PBXNativeTarget "EQfiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DC45E5B2FC3BB8D00A2FC74 /* Debug */,
+				5DC45E5C2FC3BB8D00A2FC74 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5DC45E5D2FC3BB8D00A2FC74 /* Build configuration list for PBXNativeTarget "EQfiUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5DC45E5E2FC3BB8D00A2FC74 /* Debug */,
+				5DC45E5F2FC3BB8D00A2FC74 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5DC45E2E2FC3BB8B00A2FC74 /* Project object */;
+}
