@@ -30,6 +30,13 @@ enum Constants {
     enum Ollama {
         static let generateURL = URL(string: "http://localhost:11434/api/generate")
         static let tagsURL = URL(string: "http://localhost:11434/api/tags")
+        static let downloadURL = URL(string: "https://ollama.com/download")
+        static let appBundlePath = "/Applications/Ollama.app"
+        static let cliSearchPaths = [
+            "/usr/local/bin/ollama",
+            "/opt/homebrew/bin/ollama",
+            "/Applications/Ollama.app/Contents/Resources/ollama"
+        ]
         static let modelName = "llama3.2"
         static let modelFallbackPrefixes = ["llama3.2", "llama3", "llama"]
         static let requestTimeoutSeconds: TimeInterval = 60

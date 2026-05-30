@@ -14,7 +14,7 @@ final class OllamaStatusMonitor: @unchecked Sendable {
     private var monitorTask: Task<Void, Never>?
     private let pollInterval: TimeInterval
 
-    var onStatusChange: (@Sendable (ServiceConnectionStatus) -> Void)?
+    var onAvailabilityChange: (@Sendable (OllamaAvailability) -> Void)?
 
     init(
         session: URLSession = .shared,
@@ -40,30 +40,45 @@ final class OllamaStatusMonitor: @unchecked Sendable {
         monitorTask = nil
     }
 
+    /// Immediately re-checks Ollama availability (for example after launching it).
+    func refreshNow() {
+        Task { [weak self] in
+            guard let self else { return }
+            let availability = await resolveAvailability()
+            onAvailabilityChange?(availability)
+        }
+    }
+
     private func monitorLoop() async {
-        var lastStatus: ServiceConnectionStatus?
+        var lastAvailability: OllamaAvailability?
         while !Task.isCancelled {
-            let status = await resolveStatus()
-            if status != lastStatus {
-                lastStatus = status
-                onStatusChange?(status)
+            let availability = await resolveAvailability()
+            if availability != lastAvailability {
+                lastAvailability = availability
+                onAvailabilityChange?(availability)
             }
             await sleepForPollInterval()
         }
     }
 
-    private func resolveStatus() async -> ServiceConnectionStatus {
-        guard await modelResolver.hasUsableModel() else { return .degraded }
-        guard let url = Constants.Ollama.tagsURL else { return .disconnected }
+    private func resolveAvailability() async -> OllamaAvailability {
+        guard OllamaHelper.isInstalled else { return .notInstalled }
+        guard await isServerReachable() else { return .notRunning }
+        guard await modelResolver.hasUsableModel() else { return .noModel }
+        return .ready
+    }
+
+    private func isServerReachable() async -> Bool {
+        guard let url = Constants.Ollama.tagsURL else { return false }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.timeoutInterval = 3
         do {
             let (_, response) = try await session.data(for: request)
-            guard let http = response as? HTTPURLResponse else { return .disconnected }
-            return (200...299).contains(http.statusCode) ? .connected : .degraded
+            guard let http = response as? HTTPURLResponse else { return false }
+            return (200...299).contains(http.statusCode)
         } catch {
-            return .disconnected
+            return false
         }
     }
 

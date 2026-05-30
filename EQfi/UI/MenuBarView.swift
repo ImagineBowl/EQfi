@@ -82,7 +82,11 @@ struct MenuBarView: View {
             get: { viewModel.isEQEnabled },
             set: { _ in viewModel.toggleEQEnabled() }
         ))
-        Button("Why this EQ?") { showWhyEQ = true }
+        HStack {
+            Button("Why this EQ?") { showWhyEQ = true }
+            Spacer()
+            retryEQButton
+        }
     }
 
     @ViewBuilder
@@ -138,19 +142,76 @@ struct MenuBarView: View {
                 }
                 .font(.caption)
             }
-        } else if !viewModel.isEQEnabled {
-            Text("Toggle Enable EQfi to start system audio processing. macOS will ask for System Audio Recording permission the first time.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-        } else if viewModel.systemEQStatus == .disconnected {
-            Text("System EQ is not active. Grant System Audio Recording permission if prompted.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-        } else if viewModel.ollamaStatus == .disconnected {
-            Text("Start Ollama for AI-generated EQ profiles.")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+        } else {
+            VStack(alignment: .leading, spacing: 8) {
+                if !viewModel.isEQEnabled {
+                    Text("Toggle Enable EQfi to start system audio processing. macOS will ask for System Audio Recording permission the first time.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                } else if viewModel.systemEQStatus == .disconnected {
+                    Text("System EQ is not active. Grant System Audio Recording permission if prompted.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                ollamaHintSection
+            }
         }
+    }
+
+    @ViewBuilder
+    private var ollamaHintSection: some View {
+        switch viewModel.ollamaAvailability {
+        case .ready:
+            if isUsingFallback {
+                Text("Using a static fallback EQ profile. Tap Re-EQ after starting Ollama.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        case .notInstalled:
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Ollama is not installed. Download it to generate AI EQ profiles for each track.")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Button("Download Ollama") {
+                    viewModel.openOllamaDownloadPage()
+                }
+                .font(.caption)
+            }
+        case .notRunning:
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Ollama is installed but not running. Start it, then tap Re-EQ.")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                Button("Start Ollama") {
+                    viewModel.startOllama()
+                }
+                .font(.caption)
+            }
+        case .noModel:
+            Text("Ollama is running but no compatible model is installed. Run `ollama pull \(Constants.Ollama.modelName)` in Terminal, then tap Re-EQ.")
+                .font(.caption2)
+                .foregroundStyle(.orange)
+        }
+    }
+
+    private var isUsingFallback: Bool {
+        viewModel.eqSourceLabel.localizedCaseInsensitiveContains("fallback")
+    }
+
+    private var isPipelineBusy: Bool {
+        switch viewModel.pipelineState {
+        case .detecting, .applying: return true
+        case .idle, .error: return false
+        }
+    }
+
+    private var retryEQButton: some View {
+        Button(isPipelineBusy ? "Re-EQ…" : "Re-EQ") {
+            viewModel.retryEQ()
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.small)
+        .disabled(isPipelineBusy)
     }
 
     private var footerSection: some View {

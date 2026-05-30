@@ -60,6 +60,18 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
 
     /// Immediately re-runs the pipeline for the current track.
     func refreshCurrentTrack() async {
+        await retryCurrentTrack()
+    }
+
+    /// Processes a detected track through the full AI pipeline.
+    func processTrack(_ track: TrackInfo) async {
+        pipelineTask?.cancel()
+        await runPipeline(for: track, allowWhenDisabled: false)
+    }
+
+    /// Re-runs the pipeline even when EQ is disabled so the UI can refresh.
+    func retryCurrentTrack() async {
+        pipelineTask?.cancel()
         let track: TrackInfo?
         do {
             track = try await nowPlaying.currentTrack()
@@ -67,13 +79,7 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
             return
         }
         guard let track else { return }
-        await processTrack(track)
-    }
-
-    /// Processes a detected track through the full AI pipeline.
-    func processTrack(_ track: TrackInfo) async {
-        pipelineTask?.cancel()
-        await runPipeline(for: track)
+        await runPipeline(for: track, allowWhenDisabled: true)
     }
 
     /// Enables or disables automatic EQ application.
@@ -83,24 +89,30 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
         lock.unlock()
     }
 
-    private func runPipeline(for track: TrackInfo) async {
-        guard isPipelineEnabled else { return }
+    private func runPipeline(for track: TrackInfo, allowWhenDisabled: Bool) async {
+        guard allowWhenDisabled || isPipelineEnabled else { return }
         updateState(.detecting)
         let result = await pipeline.run(for: track)
-        guard !Task.isCancelled, isPipelineEnabled else { return }
+        guard !Task.isCancelled else { return }
+        guard allowWhenDisabled || isPipelineEnabled else { return }
         updateState(.applying)
-        await applyProfile(result)
+        await applyProfile(result, applyToEngine: isPipelineEnabled)
     }
 
-    private func applyProfile(_ result: EQPipelineResult) async {
-        let manual = EQProfileBridge.toEightBand(result.profile)
-        do {
-            try await systemEQ.applyProfile(manual, adaptiveEnabled: true)
-            updateState(.idle)
-            onProfileApplied?(result)
-        } catch {
-            updateState(.error(message: error.localizedDescription))
+    private func applyProfile(_ result: EQPipelineResult, applyToEngine: Bool) async {
+        if applyToEngine {
+            let manual = EQProfileBridge.toEightBand(result.profile)
+            do {
+                try await systemEQ.applyProfile(manual, adaptiveEnabled: true)
+                updateState(.idle)
+                onProfileApplied?(result)
+            } catch {
+                updateState(.error(message: error.localizedDescription))
+            }
+            return
         }
+        updateState(.idle)
+        onProfileApplied?(result)
     }
 
     private var isPipelineEnabled: Bool {

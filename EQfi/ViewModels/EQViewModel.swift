@@ -20,6 +20,7 @@ final class EQViewModel: EQViewModelProtocol {
     var mode: EQfiMode = .ai
     var isEQEnabled = false
     var ollamaStatus: ServiceConnectionStatus = .disconnected
+    var ollamaAvailability: OllamaAvailability = .notInstalled
     var systemEQStatus: ServiceConnectionStatus = .disconnected
     var errorMessage: String?
     var showOnboarding = false
@@ -127,10 +128,11 @@ final class EQViewModel: EQViewModelProtocol {
                 self.systemEQStatus = status
             }
         }
-        ollamaMonitor.onStatusChange = { [weak self] status in
+        ollamaMonitor.onAvailabilityChange = { [weak self] availability in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                self.ollamaStatus = status
+                self.ollamaAvailability = availability
+                self.ollamaStatus = availability.connectionStatus
             }
         }
     }
@@ -214,6 +216,23 @@ final class EQViewModel: EQViewModelProtocol {
         }
         needsSystemAudioPermission = false
         await systemEQ.stopEngine()
+    }
+
+    /// Opens the Ollama download page in the default browser.
+    func openOllamaDownloadPage() {
+        OllamaHelper.openDownloadPage()
+    }
+
+    /// Starts the local Ollama app or server process.
+    func startOllama() {
+        OllamaHelper.startOllama()
+        ollamaMonitor.refreshNow()
+    }
+
+    /// Re-runs the AI EQ pipeline for the current track.
+    func retryEQ() {
+        guard mode == .ai else { return }
+        Task { await orchestrator.retryCurrentTrack() }
     }
 
     /// Opens System Settings so the user can grant System Audio Recording access.
