@@ -57,6 +57,7 @@ final class SystemAudioEQEngine: @unchecked Sendable {
             isRunning = true
             try engine.start()
             try startCaptureLoop()
+            SystemEQLogger.engineStarted(format: engineFormat)
         } catch {
             stop()
             throw error
@@ -119,6 +120,7 @@ final class SystemAudioEQEngine: @unchecked Sendable {
         engine.connect(sourceNode, to: eqUnit, format: format)
         engine.connect(eqUnit, to: engine.mainMixerNode, format: format)
         engine.connect(engine.mainMixerNode, to: engine.outputNode, format: nil)
+        engine.mainMixerNode.outputVolume = 1
     }
 
     private func startCaptureLoop() throws {

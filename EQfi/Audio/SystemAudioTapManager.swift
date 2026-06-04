@@ -20,8 +20,11 @@ final class SystemAudioTapManager {
     /// Builds a tap on the default output device and wires it into a capture-only aggregate.
     func setup() throws {
         guard let deviceUID = CoreAudioPropertyReader.defaultOutputDeviceUID() else {
-            throw SystemEQError.engineStartFailed("Unable to resolve default output device.")
+            let error = SystemEQError.engineStartFailed("Unable to resolve default output device.")
+            SystemEQLogger.tapStepFailed("resolve default output device", error: error)
+            throw error
         }
+        SystemEQLogger.engineStarting(outputDeviceUID: deviceUID)
         tapID = try createProcessTap(deviceUID: deviceUID)
         aggregateDeviceID = try createAggregateDevice()
         streamFormat = try readTapFormat()
@@ -55,7 +58,13 @@ final class SystemAudioTapManager {
 
         var newTapID = AudioObjectID(kAudioObjectUnknown)
         let status = AudioHardwareCreateProcessTap(description, &newTapID)
-        guard status == noErr else { throw SystemEQError.tapCreationFailed(status: status) }
+        guard status == noErr else {
+            SystemEQLogger.tapStepFailed(
+                "create process tap",
+                error: SystemEQError.tapCreationFailed(status: status)
+            )
+            throw SystemEQError.tapCreationFailed(status: status)
+        }
         return newTapID
     }
 
@@ -78,7 +87,13 @@ final class SystemAudioTapManager {
 
         var deviceID = AudioObjectID(kAudioObjectUnknown)
         let status = AudioHardwareCreateAggregateDevice(description as CFDictionary, &deviceID)
-        guard status == noErr else { throw SystemEQError.aggregateDeviceFailed(status: status) }
+        guard status == noErr else {
+            SystemEQLogger.tapStepFailed(
+                "create aggregate device",
+                error: SystemEQError.aggregateDeviceFailed(status: status)
+            )
+            throw SystemEQError.aggregateDeviceFailed(status: status)
+        }
         return deviceID
     }
 
@@ -91,8 +106,18 @@ final class SystemAudioTapManager {
         var description = AudioStreamBasicDescription()
         var size = UInt32(MemoryLayout<AudioStreamBasicDescription>.size)
         let status = AudioObjectGetPropertyData(tapID, &address, 0, nil, &size, &description)
-        guard status == noErr, let format = AVAudioFormat(streamDescription: &description) else {
+        guard status == noErr else {
+            SystemEQLogger.tapFormatRejected(status: status, streamDescription: description)
             throw SystemEQError.engineStartFailed("Unsupported tap audio format.")
+        }
+        var mutableDescription = description
+        let usedDirectInitializer = AVAudioFormat(streamDescription: &mutableDescription) != nil
+        guard let format = TapAudioFormatBuilder.format(from: description) else {
+            SystemEQLogger.tapFormatRejected(status: status, streamDescription: description)
+            throw SystemEQError.engineStartFailed("Unsupported tap audio format.")
+        }
+        if !usedDirectInitializer {
+            SystemEQLogger.tapFormatResolvedFromASBD(format: format)
         }
         return format
     }

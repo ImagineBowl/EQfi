@@ -26,14 +26,21 @@ final class TapPCMConverter {
             standardFormatWithSampleRate: sampleRate,
             channels: Constants.SystemEQ.channelCount
         ) else {
-            throw SystemEQError.engineStartFailed("Unable to create PCM converter output format.")
+            let error = SystemEQError.engineStartFailed("Unable to create PCM converter output format.")
+            SystemEQLogger.tapStepFailed("PCM converter output format", error: error)
+            throw error
         }
         self.outputFormat = outputFormat
         if tapFormat.isEqual(outputFormat) {
             converter = nil
         } else {
             guard let converter = AVAudioConverter(from: tapFormat, to: outputFormat) else {
-                throw SystemEQError.engineStartFailed("Unable to create PCM converter.")
+                let error = SystemEQError.engineStartFailed("Unable to create PCM converter.")
+                SystemEQLogger.tapStepFailed(
+                    "PCM converter (tap: \(tapFormat.description))",
+                    error: error
+                )
+                throw error
             }
             self.converter = converter
         }
@@ -44,6 +51,15 @@ final class TapPCMConverter {
     func write(to ringBuffer: AudioRingBuffer, from inputData: UnsafePointer<AudioBufferList>) -> Int {
         let frameCount = frameCount(for: inputData)
         guard frameCount > 0 else { return 0 }
+
+        if Int(tapFormat.channelCount) > 2,
+           let stereo = MultichannelStereoDownmixer.downmix(
+               from: inputData,
+               frameCount: frameCount,
+               tapFormat: tapFormat
+           ) {
+            return write(samples: stereo, to: ringBuffer)
+        }
 
         if let inputBuffer = makeInputBuffer(from: inputData, frameCount: frameCount) {
             if converter == nil, let samples = readInterleavedFloat(from: inputBuffer) {
@@ -73,7 +89,13 @@ final class TapPCMConverter {
         frameCount: AVAudioFrameCount
     ) -> [Float]? {
         guard let converter else { return nil }
-        guard let outputBuffer = makeOutputBuffer(frameCount: frameCount) else { return nil }
+        let outputFrameCapacity = AVAudioFrameCount(
+            ceil(Double(frameCount) * converter.outputFormat.sampleRate / converter.inputFormat.sampleRate)
+        )
+        guard let outputBuffer = makeOutputBuffer(frameCapacity: max(outputFrameCapacity, 1)) else {
+            return nil
+        }
+        outputBuffer.frameLength = 0
 
         var consumed = false
         var error: NSError?
@@ -86,7 +108,7 @@ final class TapPCMConverter {
             outStatus.pointee = .haveData
             return inputBuffer
         }
-        guard status != .error, error == nil else { return nil }
+        guard status != .error, error == nil, outputBuffer.frameLength > 0 else { return nil }
         return readInterleavedFloat(from: outputBuffer)
     }
 
@@ -121,15 +143,13 @@ final class TapPCMConverter {
         return buffer
     }
 
-    private func makeOutputBuffer(frameCount: AVAudioFrameCount) -> AVAudioPCMBuffer? {
-        if let convertedBuffer, convertedBuffer.frameCapacity >= frameCount {
-            convertedBuffer.frameLength = frameCount
+    private func makeOutputBuffer(frameCapacity: AVAudioFrameCount) -> AVAudioPCMBuffer? {
+        if let convertedBuffer, convertedBuffer.frameCapacity >= frameCapacity {
             return convertedBuffer
         }
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: frameCount) else {
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: outputFormat, frameCapacity: frameCapacity) else {
             return nil
         }
-        buffer.frameLength = frameCount
         convertedBuffer = buffer
         return buffer
     }

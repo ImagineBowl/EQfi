@@ -68,9 +68,13 @@ final class SystemAudioEQService: SystemEQServiceProtocol, @unchecked Sendable {
         do {
             try newEngine.start()
         } catch {
+            SystemEQLogger.engineStartFailed(error, context: "SystemAudioEQEngine.start")
             newEngine.stop()
             engine = nil
             isEngineRunning = false
+            if let systemEQ = error as? SystemEQError {
+                throw systemEQ
+            }
             throw SystemEQError.engineStartFailed(error.localizedDescription)
         }
         engine = newEngine
