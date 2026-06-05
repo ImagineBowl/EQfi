@@ -58,8 +58,12 @@ final class EQProfileCache: EQProfileCacheProtocol, @unchecked Sendable {
         lock.lock()
         let snapshot = memoryCache
         lock.unlock()
-        guard let data = try? JSONEncoder().encode(snapshot) else { return }
-        defaults.set(data, forKey: cacheKey)
+        do {
+            let data = try JSONEncoder().encode(snapshot)
+            defaults.set(data, forKey: cacheKey)
+        } catch {
+            PipelineLogger.eqProfileCachePersistFailed(error.localizedDescription)
+        }
     }
 
     private static func loadFromDefaults(defaults: UserDefaults, cacheKey: String) -> [String: CachedEQProfile] {

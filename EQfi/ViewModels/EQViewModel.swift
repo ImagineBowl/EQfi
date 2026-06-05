@@ -29,7 +29,7 @@ final class EQViewModel: EQViewModelProtocol {
     let manualViewModel: ManualEQViewModel
 
     private let nowPlaying: NowPlayingServiceProtocol
-    private let orchestrator: EQOrchestrator
+    private let orchestrator: any EQOrchestratorProtocol
     private let systemEQ: SystemEQServiceProtocol
     private let modePreference: ModePreferenceServiceProtocol
     private let keychain: KeychainServiceProtocol
@@ -39,7 +39,7 @@ final class EQViewModel: EQViewModelProtocol {
 
     init(
         nowPlaying: NowPlayingServiceProtocol,
-        orchestrator: EQOrchestrator,
+        orchestrator: any EQOrchestratorProtocol,
         systemEQ: SystemEQServiceProtocol,
         modePreference: ModePreferenceServiceProtocol,
         keychain: KeychainServiceProtocol,

@@ -26,4 +26,13 @@ protocol EQOrchestratorProtocol: AnyObject, Sendable {
 
     /// Immediately re-runs the pipeline for the current track.
     func refreshCurrentTrack() async
+
+    /// Processes a detected track through the full AI pipeline.
+    func processTrack(_ track: TrackInfo) async
+
+    /// Re-runs the pipeline even when EQ is disabled so the UI can refresh.
+    func retryCurrentTrack() async
+
+    /// Enables or disables automatic EQ application.
+    func setEnabled(_ enabled: Bool)
 }

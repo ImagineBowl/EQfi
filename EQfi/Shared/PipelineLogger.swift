@@ -77,6 +77,10 @@ enum PipelineLogger {
         pipeline.info("Cached EQ profile: \(presetName, privacy: .public) on \(device, privacy: .public)")
     }
 
+    static func eqProfileCachePersistFailed(_ message: String) {
+        pipeline.error("EQ profile cache persist failed: \(message, privacy: .public)")
+    }
+
     static func adaptiveFeaturesUpdated(_ features: AudioFeatures) {
         pipeline.debug("Adaptive analysis: \(features.llmSummary, privacy: .public)")
     }

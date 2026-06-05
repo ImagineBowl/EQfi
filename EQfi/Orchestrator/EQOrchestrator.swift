@@ -65,21 +65,36 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
 
     /// Processes a detected track through the full AI pipeline.
     func processTrack(_ track: TrackInfo) async {
-        pipelineTask?.cancel()
-        await runPipeline(for: track, allowWhenDisabled: false)
+        await runExclusivePipeline {
+            await self.runPipeline(for: track, allowWhenDisabled: false)
+        }
     }
 
     /// Re-runs the pipeline even when EQ is disabled so the UI can refresh.
     func retryCurrentTrack() async {
-        pipelineTask?.cancel()
-        let track: TrackInfo?
-        do {
-            track = try await nowPlaying.currentTrack()
-        } catch {
-            return
+        await runExclusivePipeline {
+            let track: TrackInfo?
+            do {
+                track = try await self.nowPlaying.currentTrack()
+            } catch {
+                return
+            }
+            guard let track else { return }
+            await self.runPipeline(for: track, allowWhenDisabled: true)
         }
-        guard let track else { return }
-        await runPipeline(for: track, allowWhenDisabled: true)
+    }
+
+    /// Runs pipeline work on a single cancellable task, awaiting any prior run to finish.
+    private func runExclusivePipeline(_ work: @escaping @Sendable () async -> Void) async {
+        let previous = pipelineTask
+        previous?.cancel()
+        await previous?.value
+
+        let task = Task {
+            await work()
+        }
+        pipelineTask = task
+        await task.value
     }
 
     /// Enables or disables automatic EQ application.
