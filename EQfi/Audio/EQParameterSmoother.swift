@@ -33,4 +33,9 @@ final class EQParameterSmoother: @unchecked Sendable {
         }
         return current
     }
+
+    /// Returns the most recently smoothed band gains.
+    func currentGains() -> [Float] {
+        current
+    }
 }

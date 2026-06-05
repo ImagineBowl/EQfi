@@ -176,7 +176,7 @@ final class EQViewModel: EQViewModelProtocol {
 
     private func handleModeTransition(from oldMode: EQfiMode, to newMode: EQfiMode) {
         if oldMode == .ai, newMode == .manual {
-            freezeCurrentEQForManual()
+            Task { await freezeCurrentEQForManual() }
             return
         }
         if oldMode == .manual, newMode == .ai {
@@ -184,7 +184,11 @@ final class EQViewModel: EQViewModelProtocol {
         }
     }
 
-    private func freezeCurrentEQForManual() {
+    private func freezeCurrentEQForManual() async {
+        if let liveProfile = await systemEQ.currentAppliedProfile() {
+            manualViewModel.adoptProfile(liveProfile)
+            return
+        }
         let profile = manualProfile ?? EQProfileBridge.toEightBand(currentProfile ?? .flat())
         manualViewModel.adoptProfile(profile)
     }

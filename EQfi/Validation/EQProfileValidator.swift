@@ -9,8 +9,8 @@ import Foundation
 
 /// Validates and parses Ollama JSON responses into EQ profiles.
 struct EQProfileValidator {
-    private let minGain = Constants.EQProfileLimits.gainMin
-    private let maxGain = Constants.EQProfileLimits.gainMax
+    private let minGain = Constants.EQProfileLimits.aiGainMin
+    private let maxGain = Constants.EQProfileLimits.aiGainMax
 
     /// Parses raw Ollama text and validates all five band gains.
     func validate(rawResponse: String, presetName: String) throws -> EQProfile {

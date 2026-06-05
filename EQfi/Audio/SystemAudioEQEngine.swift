@@ -113,6 +113,11 @@ final class SystemAudioEQEngine: @unchecked Sendable {
         )
     }
 
+    /// Returns live band gains including any adaptive smoothing in progress.
+    func currentAppliedProfile() -> EQManualProfile? {
+        adaptiveController?.currentAppliedProfile()
+    }
+
     private func requireTapFormat() throws -> AVAudioFormat {
         guard let format = tapManager.streamFormat else {
             throw SystemEQError.engineStartFailed("Missing tap audio format.")

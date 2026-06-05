@@ -20,4 +20,7 @@ protocol SystemEQServiceProtocol: Sendable {
 
     /// Returns whether the EQ engine is actively processing audio.
     func isActive() async -> Bool
+
+    /// Returns the profile currently applied on the engine, including adaptive offsets.
+    func currentAppliedProfile() async -> EQManualProfile?
 }
