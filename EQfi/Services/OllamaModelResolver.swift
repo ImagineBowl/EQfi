@@ -7,29 +7,43 @@
 
 import Foundation
 
-/// Resolves an installed Ollama model name from the local tags API.
+/// Resolves an Ollama model name, preferring a loaded Llama model over installed tags.
 actor OllamaModelResolver {
     private let session: URLSession
-    private var cachedModel: String?
+    private var cachedInstalledModel: String?
 
     init(session: URLSession = .shared) {
         self.session = session
     }
 
-    /// Returns the best locally installed model for EQ generation.
+    /// Returns the best model for EQ generation.
     func resolveModel() async throws -> String {
-        if let cached = cachedModel { return cached }
-        let model = try await fetchBestModel()
-        cachedModel = model
+        if let loaded = try await fetchLoadedModel() {
+            return loaded
+        }
+        if let cached = cachedInstalledModel { return cached }
+        let model = try await fetchBestInstalledModel()
+        cachedInstalledModel = model
         return model
     }
 
-    /// Returns whether a usable model is installed.
+    /// Returns whether a usable model is available.
     func hasUsableModel() async -> Bool {
         (try? await resolveModel()) != nil
     }
 
-    private func fetchBestModel() async throws -> String {
+    private func fetchLoadedModel() async throws -> String? {
+        guard let url = Constants.Ollama.psURL else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 3
+        let (data, response) = try await session.data(for: request)
+        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return nil }
+        let names = try parseLoadedModelNames(from: data)
+        return OllamaModelPicker.selectBest(from: names)
+    }
+
+    private func fetchBestInstalledModel() async throws -> String {
         guard let url = Constants.Ollama.tagsURL else { throw OllamaError.unreachable }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -38,25 +52,30 @@ actor OllamaModelResolver {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
             throw OllamaError.unreachable
         }
-        let names = try parseModelNames(from: data)
-        guard let match = selectModel(from: names) else {
+        let names = try parseInstalledModelNames(from: data)
+        guard let match = OllamaModelPicker.selectBest(from: names) else {
             throw OllamaError.modelNotFound(preferred: Constants.Ollama.modelName)
         }
         return match
     }
 
-    private func parseModelNames(from data: Data) throws -> [String] {
+    private func parseLoadedModelNames(from data: Data) throws -> [String] {
+        let decoded = try JSONDecoder().decode(OllamaPsResponse.self, from: data)
+        return decoded.models.map(\.model)
+    }
+
+    private func parseInstalledModelNames(from data: Data) throws -> [String] {
         let decoded = try JSONDecoder().decode(OllamaTagsResponse.self, from: data)
         return decoded.models.map(\.name)
     }
+}
 
-    private func selectModel(from names: [String]) -> String? {
-        for prefix in Constants.Ollama.modelFallbackPrefixes {
-            if let exact = names.first(where: { $0 == prefix }) { return exact }
-            if let tagged = names.first(where: { $0.hasPrefix("\(prefix):") }) { return tagged }
-        }
-        return names.first
+private struct OllamaPsResponse: Decodable {
+    struct Model: Decodable {
+        let model: String
     }
+
+    let models: [Model]
 }
 
 private struct OllamaTagsResponse: Decodable {

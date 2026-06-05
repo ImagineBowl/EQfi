@@ -30,6 +30,7 @@ enum Constants {
     enum Ollama {
         static let generateURL = URL(string: "http://localhost:11434/api/generate")
         static let tagsURL = URL(string: "http://localhost:11434/api/tags")
+        static let psURL = URL(string: "http://localhost:11434/api/ps")
         static let downloadURL = URL(string: "https://ollama.com/download")
         static let appBundlePath = "/Applications/Ollama.app"
         static let cliSearchPaths = [

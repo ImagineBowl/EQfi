@@ -62,8 +62,9 @@ final class OllamaStatusMonitor: @unchecked Sendable {
     }
 
     private func resolveAvailability() async -> OllamaAvailability {
-        guard OllamaHelper.isInstalled else { return .notInstalled }
-        guard await isServerReachable() else { return .notRunning }
+        guard await isServerReachable() else {
+            return OllamaHelper.isInstalled ? .notRunning : .notInstalled
+        }
         guard await modelResolver.hasUsableModel() else { return .noModel }
         return .ready
     }

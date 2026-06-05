@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Generates EQ profiles by prompting a local Ollama Llama 3.2 model.
+/// Generates EQ profiles by prompting a local Ollama model.
 final class OllamaService: OllamaServiceProtocol, @unchecked Sendable {
     private let session: URLSession
     private let validator: EQProfileValidator

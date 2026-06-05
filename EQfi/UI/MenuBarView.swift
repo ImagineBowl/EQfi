@@ -179,7 +179,7 @@ struct MenuBarView: View {
             }
         case .notRunning:
             VStack(alignment: .leading, spacing: 6) {
-                Text("Ollama is installed but not running. Start it, then tap Re-EQ.")
+                Text("Ollama is installed but not running. Open the Ollama app or run `ollama serve`, then tap Re-EQ.")
                     .font(.caption2)
                     .foregroundStyle(.orange)
                 Button("Start Ollama") {
@@ -188,7 +188,7 @@ struct MenuBarView: View {
                 .font(.caption)
             }
         case .noModel:
-            Text("Ollama is running but no compatible model is installed. Run `ollama pull \(Constants.Ollama.modelName)` in Terminal, then tap Re-EQ.")
+            Text("Ollama is running but no usable model is installed. Pull a Llama model (for example `ollama pull \(Constants.Ollama.modelName)`), then tap Re-EQ.")
                 .font(.caption2)
                 .foregroundStyle(.orange)
         }

@@ -22,10 +22,10 @@ enum OllamaError: Error, LocalizedError, Sendable {
         case .unreachable:
             return "Ollama is not running on localhost."
         case .modelNotFound(let preferred):
-            return "No Ollama model matching '\(preferred)' is installed. Run: ollama pull \(preferred)"
+            return "No usable Ollama model is installed. Pull a Llama model with: ollama pull \(preferred)"
         case .invalidResponse(let statusCode):
             if statusCode == 404 {
-                return "Ollama model not found. Install one with: ollama pull llama3.2"
+                return "Ollama model not found. Pull a Llama model with: ollama pull \(Constants.Ollama.modelName)"
             }
             return "Ollama returned an unexpected status code: \(statusCode)."
         case .decodingFailed(let detail):
