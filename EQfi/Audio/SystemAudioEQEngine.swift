@@ -86,6 +86,21 @@ final class SystemAudioEQEngine: @unchecked Sendable {
         isRunning && (audioEngine?.isRunning ?? false)
     }
 
+    /// Restarts playback without tearing down the Core Audio tap.
+    func reactivate() throws {
+        guard audioEngine != nil, tapManager.aggregateDeviceID != kAudioObjectUnknown else {
+            throw SystemEQError.engineNotRunning
+        }
+        guard let engine = audioEngine else { throw SystemEQError.engineNotRunning }
+        if engine.isRunning {
+            isRunning = true
+            return
+        }
+        try engine.start()
+        isRunning = true
+        SystemEQLogger.engineReactivated()
+    }
+
     /// Applies a new EQ profile to the running engine.
     func applyProfile(_ profile: EQManualProfile, adaptiveEnabled: Bool = true) {
         adaptiveController?.setEnabled(adaptiveEnabled)

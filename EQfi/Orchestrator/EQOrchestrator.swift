@@ -13,6 +13,7 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
     private let systemEQ: SystemEQServiceProtocol
     private let pipeline: EQPipelineRunner
     private var pipelineTask: Task<Void, Never>?
+    private var inFlightTrackKey: String?
     private let lock = NSLock()
     private var state: EQState = .idle
     private var isEnabled = true
@@ -55,6 +56,9 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
     func stopListening() {
         pipelineTask?.cancel()
         pipelineTask = nil
+        lock.lock()
+        inFlightTrackKey = nil
+        lock.unlock()
         updateState(.idle)
     }
 
@@ -65,14 +69,14 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
 
     /// Processes a detected track through the full AI pipeline.
     func processTrack(_ track: TrackInfo) async {
-        await runExclusivePipeline {
+        await runExclusivePipeline(trackKey: track.cacheKey, force: false) {
             await self.runPipeline(for: track, allowWhenDisabled: false)
         }
     }
 
     /// Re-runs the pipeline even when EQ is disabled so the UI can refresh.
     func retryCurrentTrack() async {
-        await runExclusivePipeline {
+        await runExclusivePipeline(trackKey: nil, force: true) {
             let track: TrackInfo?
             do {
                 track = try await self.nowPlaying.currentTrack()
@@ -85,16 +89,42 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
     }
 
     /// Runs pipeline work on a single cancellable task, awaiting any prior run to finish.
-    private func runExclusivePipeline(_ work: @escaping @Sendable () async -> Void) async {
-        let previous = pipelineTask
-        previous?.cancel()
-        await previous?.value
+    private func runExclusivePipeline(
+        trackKey: String?,
+        force: Bool,
+        _ work: @escaping @Sendable () async -> Void
+    ) async {
+        let existingTask = pipelineTask
+        if PipelineRunCoalescing.shouldAwaitExistingRun(
+            force: force,
+            inFlightKey: inFlightTrackKey,
+            newKey: trackKey
+        ), let existingTask {
+            await existingTask.value
+            return
+        }
+
+        existingTask?.cancel()
+        await existingTask?.value
+
+        lock.lock()
+        inFlightTrackKey = trackKey
+        lock.unlock()
 
         let task = Task {
             await work()
+            self.clearInFlightTrackKeyIfMatching(trackKey)
         }
         pipelineTask = task
         await task.value
+    }
+
+    private func clearInFlightTrackKeyIfMatching(_ trackKey: String?) {
+        lock.lock()
+        if inFlightTrackKey == trackKey {
+            inFlightTrackKey = nil
+        }
+        lock.unlock()
     }
 
     /// Enables or disables automatic EQ application.

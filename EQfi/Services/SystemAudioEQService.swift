@@ -16,9 +16,10 @@ final class SystemAudioEQService: SystemEQServiceProtocol, @unchecked Sendable {
     /// Starts the native audio tap and EQ playback engine.
     func startEngine() async throws {
         guard #available(macOS 14.2, *) else { throw SystemEQError.unsupportedOSVersion }
-        try await MainActor.run {
-            try startEngineOnMainActor()
+        await MainActor.run {
+            stopEngineOnMainActor()
         }
+        try await startEngineWithRecovery()
     }
 
     /// Stops the audio tap and EQ playback engine.
@@ -49,36 +50,67 @@ final class SystemAudioEQService: SystemEQServiceProtocol, @unchecked Sendable {
     }
 
     private func ensureEngineRunning() async throws {
-        let active = await isActive()
-        if active { return }
-        try await startEngine()
+        let needsFullStart = await MainActor.run { () -> Bool in
+            guard let engine = typedEngine() else { return true }
+            if engine.running() { return false }
+            do {
+                try engine.reactivate()
+                return false
+            } catch {
+                SystemEQLogger.engineReactivateFailed(error)
+                stopEngineOnMainActor()
+                return true
+            }
+        }
+        guard needsFullStart else { return }
+        try await startEngineWithRecovery()
+    }
+
+    private func startEngineWithRecovery() async throws {
+        guard #available(macOS 14.2, *) else { throw SystemEQError.unsupportedOSVersion }
+        var lastError: Error?
+        let attempts = Constants.SystemEQ.engineRecoveryMaxAttempts
+        for attempt in 0..<attempts {
+            if attempt > 0 {
+                SystemEQLogger.engineRestartRetry(attempt: attempt + 1)
+                try await Task.sleep(
+                    nanoseconds: UInt64(Constants.SystemEQ.engineRecoveryDelaySeconds * 1_000_000_000)
+                )
+                await MainActor.run {
+                    stopEngineOnMainActor()
+                }
+            }
+            do {
+                try await MainActor.run {
+                    try performFreshEngineStartOnMainActor()
+                }
+                return
+            } catch {
+                lastError = error
+                SystemEQLogger.engineStartFailed(
+                    error,
+                    context: "SystemAudioEQEngine.start attempt \(attempt + 1)"
+                )
+                await MainActor.run {
+                    stopEngineOnMainActor()
+                }
+            }
+        }
+        let detail = Self.describeError(lastError)
+        throw SystemEQError.engineStartFailed(
+            "\(detail) Quit other audio apps, wait a few seconds, then toggle EQ again."
+        )
     }
 
     @available(macOS 14.2, *)
     @MainActor
-    private func startEngineOnMainActor() throws {
-        lock.lock()
-        defer { lock.unlock() }
-        if isEngineRunning {
-            typedEngine()?.stop()
-            engine = nil
-            isEngineRunning = false
-        }
+    private func performFreshEngineStartOnMainActor() throws {
         let newEngine = SystemAudioEQEngine()
-        do {
-            try newEngine.start()
-        } catch {
-            SystemEQLogger.engineStartFailed(error, context: "SystemAudioEQEngine.start")
-            newEngine.stop()
-            engine = nil
-            isEngineRunning = false
-            if let systemEQ = error as? SystemEQError {
-                throw systemEQ
-            }
-            throw SystemEQError.engineStartFailed(error.localizedDescription)
-        }
+        try newEngine.start()
+        lock.lock()
         engine = newEngine
         isEngineRunning = true
+        lock.unlock()
     }
 
     @MainActor
@@ -96,5 +128,10 @@ final class SystemAudioEQService: SystemEQServiceProtocol, @unchecked Sendable {
     @MainActor
     private func typedEngine() -> SystemAudioEQEngine? {
         engine as? SystemAudioEQEngine
+    }
+
+    private static func describeError(_ error: Error?) -> String {
+        guard let error else { return "unknown" }
+        return (error as? LocalizedError)?.errorDescription ?? String(describing: error)
     }
 }

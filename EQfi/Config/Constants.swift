@@ -64,6 +64,8 @@ enum Constants {
         static let ringBufferFrames = 16_384
         static let maxRenderFrames: AVAudioFrameCount = 512
         static let statusPollSeconds: TimeInterval = 5
+        static let engineRecoveryDelaySeconds: TimeInterval = 1.5
+        static let engineRecoveryMaxAttempts = 2
     }
 
     enum NowPlaying {

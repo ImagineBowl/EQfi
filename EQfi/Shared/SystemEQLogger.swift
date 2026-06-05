@@ -27,6 +27,25 @@ enum SystemEQLogger {
         print("\(prefix) \(message)")
     }
 
+    static func engineReactivated() {
+        let message = "Reactivated EQ playback without recreating the audio tap"
+        log.info("\(message, privacy: .public)")
+        print("\(prefix) \(message)")
+    }
+
+    static func engineReactivateFailed(_ error: Error) {
+        let detail = (error as? LocalizedError)?.errorDescription ?? String(describing: error)
+        let message = "Lightweight engine reactivation failed: \(detail)"
+        log.notice("\(message, privacy: .public)")
+        print("\(prefix) \(message)")
+    }
+
+    static func engineRestartRetry(attempt: Int) {
+        let message = "Retrying EQ engine start (attempt \(attempt))"
+        log.notice("\(message, privacy: .public)")
+        print("\(prefix) \(message)")
+    }
+
     static func engineStartFailed(_ error: Error, context: String? = nil) {
         let detail = (error as? LocalizedError)?.errorDescription ?? String(describing: error)
         let message = context.map { "\($0): \(detail)" } ?? detail
