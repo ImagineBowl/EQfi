@@ -10,16 +10,21 @@ import Foundation
 
 /// Central configuration for URLs, intervals, and prompt templates.
 enum Constants {
-    enum Spotify {
-        static let tokenURL = URL(string: "https://accounts.spotify.com/api/token")
-        static let apiBaseURL = URL(string: "https://api.spotify.com/v1")
-        static let tokenExpirySeconds: TimeInterval = 3_600
-        static let clientIDKey = "spotify_client_id"
-        static let clientSecretKey = "spotify_client_secret"
+    enum UpdateChecker {
+        static let repository = "ImagineBowl/EQfi"
+        static let latestReleaseURL = URL(string: "https://api.github.com/repos/ImagineBowl/EQfi/releases/latest")
+        static let userAgent = "EQfi/1.0 (com.Imaginebowl.EQfi)"
+        static let requestTimeoutSeconds: TimeInterval = 15
+        static let checkIntervalSeconds: TimeInterval = 86_400
+    }
 
-        static var defaultMarket: String {
-            Locale.current.region?.identifier ?? "US"
-        }
+    enum GenreProxy {
+        /// Hosted genre API base URL (no trailing slash). Set before public release.
+        static let baseURL = URL(string: "https://eqfi-genre-api.imaginebowl.workers.dev")
+        /// Public client key matching `EQFI_API_KEY` on the worker.
+        static let apiKey = "eqfiapiimaginebowl"
+        static let userAgent = "EQfi/1.0 (com.Imaginebowl.EQfi)"
+        static let requestTimeoutSeconds: TimeInterval = 15
     }
 
     enum MusicBrainz {
@@ -43,13 +48,16 @@ enum Constants {
         static let requestTimeoutSeconds: TimeInterval = 60
 
         static func promptTemplate(genre: String, device: String) -> String {
-            """
-            You are an audio engineer. The user is listening to \(genre) on \(device). \
+            let maxGain = Constants.EQProfileLimits.aiGainMax
+            return """
+            You are a mastering engineer applying gentle genre-appropriate EQ. \
+            The user is listening to \(genre) on \(device). \
             Return a single JSON object with exactly five numeric fields: \
             sub_bass, bass, midrange, presence, brilliance. \
-            Each value must be a float between -12.0 and 12.0. \
+            Each value must be a float between -\(maxGain) and \(maxGain). \
+            Prefer subtle adjustments in the ±1 to ±3 dB range; avoid extreme boosts or cuts. \
             Do not nest objects. Example: \
-            {"sub_bass":2.0,"bass":4.0,"midrange":-1.0,"presence":3.0,"brilliance":2.0}
+            {"sub_bass":0.5,"bass":1.5,"midrange":-0.5,"presence":1.0,"brilliance":1.5}
             """
         }
     }
@@ -85,7 +93,15 @@ enum Constants {
         static let analysisInterval: TimeInterval = 0.12
         static let fftSize = 4096
         static let sampleQueueCapacity = 32_768
-        static let maxBandDeltaDB: Float = 2.5
+        static let maxBandDeltaDB: Float = 1.25
+        static let maxStackedDeltaDB: Float = 1.5
+        static let bassLowThreshold: Float = 0.12
+        static let bassHighThreshold: Float = 0.72
+        static let trebleLowThreshold: Float = 0.05
+        static let trebleHighThreshold: Float = 0.45
+        static let harshnessThreshold: Float = 0.45
+        static let darkCentroidHz: Float = 900
+        static let darkMixBassThreshold: Float = 0.55
         static let smoothingFactor: Float = 0.12
         static let featureSmoothingFactor: Float = 0.25
         static let silenceGateDB: Float = -40
@@ -95,16 +111,16 @@ enum Constants {
     enum EQProfileLimits {
         static let gainMin: Float = -12.0
         static let gainMax: Float = 12.0
+        static let aiGainMin: Float = -5.0
+        static let aiGainMax: Float = 5.0
     }
 
     enum UserDefaultsKeys {
         static let operatingMode = "eqfi_operating_mode"
         static let genreCache = "eqfi_genre_cache"
-        static let eqProfileCache = "eqfi_eq_profile_cache"
+        static let eqProfileCache = "eqfi_eq_profile_cache_v2"
         static let customPresets = "eqfi_custom_presets"
-    }
-
-    enum Keychain {
-        static let serviceName = "com.imaginebowl.EQfi"
+        static let lastUpdateCheckDate = "eqfi_last_update_check_date"
+        static let dismissedUpdateVersion = "eqfi_dismissed_update_version"
     }
 }

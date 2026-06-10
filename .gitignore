@@ -10,6 +10,7 @@ xcuserdata/
 *.ipa
 *.dSYM.zip
 *.dSYM
+*.dmg
 
 # Swift Package Manager
 .build/
@@ -25,6 +26,9 @@ Package.resolved
 # Secrets (never commit credentials)
 .env
 *.env
+api/.dev.vars
+api/node_modules/
+api/.wrangler/
 
 # Cursor / editor
 .cursor/

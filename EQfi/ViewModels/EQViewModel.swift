@@ -5,6 +5,7 @@
 //  Created by Ahsan Minhas on 25/05/2026.
 //
 
+import AppKit
 import Foundation
 
 /// Main menubar ViewModel coordinating AI and manual EQ modes.
@@ -23,8 +24,8 @@ final class EQViewModel: EQViewModelProtocol {
     var ollamaAvailability: OllamaAvailability = .notInstalled
     var systemEQStatus: ServiceConnectionStatus = .disconnected
     var errorMessage: String?
-    var showOnboarding = false
     var needsSystemAudioPermission = false
+    var availableUpdate: AppUpdateInfo?
 
     let manualViewModel: ManualEQViewModel
 
@@ -32,29 +33,31 @@ final class EQViewModel: EQViewModelProtocol {
     private let orchestrator: any EQOrchestratorProtocol
     private let systemEQ: SystemEQServiceProtocol
     private let modePreference: ModePreferenceServiceProtocol
-    private let keychain: KeychainServiceProtocol
     private let systemEQMonitor: SystemEQStatusMonitor
     private let ollamaMonitor: OllamaStatusMonitor
+    private let updateChecker: UpdateCheckerServiceProtocol
     private var isEngineTransitioning = false
+
+    var appVersion: String { AppVersion.current }
 
     init(
         nowPlaying: NowPlayingServiceProtocol,
         orchestrator: any EQOrchestratorProtocol,
         systemEQ: SystemEQServiceProtocol,
         modePreference: ModePreferenceServiceProtocol,
-        keychain: KeychainServiceProtocol,
         manualViewModel: ManualEQViewModel,
         systemEQMonitor: SystemEQStatusMonitor,
-        ollamaMonitor: OllamaStatusMonitor
+        ollamaMonitor: OllamaStatusMonitor,
+        updateChecker: UpdateCheckerServiceProtocol
     ) {
         self.nowPlaying = nowPlaying
         self.orchestrator = orchestrator
         self.systemEQ = systemEQ
         self.modePreference = modePreference
-        self.keychain = keychain
         self.manualViewModel = manualViewModel
         self.systemEQMonitor = systemEQMonitor
         self.ollamaMonitor = ollamaMonitor
+        self.updateChecker = updateChecker
         self.mode = modePreference.loadMode()
         bindOrchestratorCallbacks()
         bindMonitorCallbacks()
@@ -78,13 +81,13 @@ final class EQViewModel: EQViewModelProtocol {
 
     /// Starts all background monitoring and pipeline tasks.
     func start() {
-        showOnboarding = !keychain.hasSpotifyCredentials()
         orchestrator.setEnabled(isEQEnabled)
         orchestrator.startListening()
         bindNowPlayingCallback()
         nowPlaying.startPolling(interval: Constants.NowPlaying.pollIntervalSeconds)
         systemEQMonitor.startMonitoring()
         ollamaMonitor.startMonitoring()
+        Task { await checkForUpdates() }
     }
 
     /// Stops all background monitoring and pipeline tasks.
@@ -94,16 +97,6 @@ final class EQViewModel: EQViewModelProtocol {
         systemEQMonitor.stopMonitoring()
         ollamaMonitor.stopMonitoring()
         Task { await systemEQ.stopEngine() }
-    }
-
-    /// Dismisses onboarding without saving Spotify credentials.
-    func skipOnboarding() {
-        showOnboarding = false
-    }
-
-    /// Reopens the Spotify credential setup panel.
-    func reopenSpotifySetup() {
-        showOnboarding = true
     }
 
     private func bindOrchestratorCallbacks() {
@@ -176,7 +169,7 @@ final class EQViewModel: EQViewModelProtocol {
 
     private func handleModeTransition(from oldMode: EQfiMode, to newMode: EQfiMode) {
         if oldMode == .ai, newMode == .manual {
-            freezeCurrentEQForManual()
+            Task { await freezeCurrentEQForManual() }
             return
         }
         if oldMode == .manual, newMode == .ai {
@@ -184,7 +177,11 @@ final class EQViewModel: EQViewModelProtocol {
         }
     }
 
-    private func freezeCurrentEQForManual() {
+    private func freezeCurrentEQForManual() async {
+        if let liveProfile = await systemEQ.currentAppliedProfile() {
+            manualViewModel.adoptProfile(liveProfile)
+            return
+        }
         let profile = manualProfile ?? EQProfileBridge.toEightBand(currentProfile ?? .flat())
         manualViewModel.adoptProfile(profile)
     }
@@ -239,6 +236,23 @@ final class EQViewModel: EQViewModelProtocol {
     func openSystemAudioSettings() {
         SystemAudioPermissionHelper.activateForPermissionPrompt()
         SystemAudioPermissionHelper.openSystemAudioRecordingSettings()
+    }
+
+    /// Opens the latest release download page or DMG asset in the default browser.
+    func openAvailableUpdate() {
+        guard let update = availableUpdate else { return }
+        NSWorkspace.shared.open(update.preferredDownloadURL)
+    }
+
+    /// Dismisses the current update banner until a newer release appears.
+    func dismissAvailableUpdate() {
+        guard let update = availableUpdate else { return }
+        updateChecker.dismiss(version: update.version)
+        availableUpdate = nil
+    }
+
+    private func checkForUpdates() async {
+        availableUpdate = await updateChecker.checkForUpdateIfNeeded()
     }
 
     private func activeEQProfile() -> EQManualProfile {

@@ -14,9 +14,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Starts ViewModel monitoring when the app finishes launching.
     func applicationDidFinishLaunching(_ notification: Notification) {
         dependencies.viewModel.start()
-        if dependencies.viewModel.showOnboarding {
-            NSApplication.shared.activate(ignoringOtherApps: true)
-        }
     }
 
     /// Stops services before the app terminates.

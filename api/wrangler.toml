@@ -1,0 +1,20 @@
+name = "eqfi-genre-api"
+main = "src/index.ts"
+compatibility_date = "2025-03-01"
+
+[vars]
+SPOTIFY_MARKET = "US"
+
+# Secrets (set via `wrangler secret put`, never commit):
+#   SPOTIFY_CLIENT_ID
+#   SPOTIFY_CLIENT_SECRET
+#   EQFI_API_KEY
+
+# Optional: add KV for persistent cross-request caching.
+# 1. Cloudflare Dashboard → Workers & Pages → KV → Create namespace
+# 2. Or: npx wrangler kv namespace create GENRE_CACHE
+# 3. Uncomment and paste the namespace id:
+#
+# [[kv_namespaces]]
+# binding = "GENRE_CACHE"
+# id = "your_kv_namespace_id"

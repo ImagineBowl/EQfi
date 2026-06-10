@@ -60,6 +60,19 @@ final class AdaptiveEQController: @unchecked Sendable {
         }
     }
 
+    /// Returns the gains currently applied or being smoothed toward on the engine.
+    func currentAppliedProfile() -> EQManualProfile {
+        let gains = smoother.currentGains()
+        let bands = zip(baseProfile.bands, gains).map { band, gain in
+            EQBand(frequency: band.frequency, label: band.label, gain: gain)
+        }
+        return EQManualProfile(
+            bands: bands,
+            masterGain: baseProfile.masterGain,
+            presetName: baseProfile.presetName
+        )
+    }
+
     /// Stores the genre/base EQ layer used for adaptive offsets.
     func updateBaseProfile(_ profile: EQManualProfile) {
         baseProfile = profile

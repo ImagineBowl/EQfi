@@ -4,18 +4,18 @@ AI-powered system-wide equalizer for macOS. EQfi lives in your menu bar, detects
 
 ## Features
 
-- **AI mode** — Detects now playing → Spotify genre lookup (with MusicBrainz fallback) → Ollama EQ generation → system-wide 8-band EQ
+- **AI mode** — Detects now playing → genre lookup via hosted API (Spotify + MusicBrainz on server) → Ollama EQ generation → system-wide 8-band EQ
 - **Manual mode** — 8-band sliders, built-in presets, custom preset save/load
 - **Native system EQ** — Core Audio tap + aggregate device (macOS 14.2+), no third-party audio drivers
-- **Local-first** — Ollama runs on your Mac; no cloud AI required for EQ generation
+- **Local-first AI** — Ollama runs on your Mac; no cloud AI required for EQ generation
 
 ## Requirements
 
 - macOS 14.2 or later
 - Xcode 16+ (to build)
 - [Ollama](https://ollama.com) with a Llama 3.2 model (e.g. `ollama pull llama3.2:3b`)
-- **Spotify Developer app** (optional) — for genre lookup via Spotify Web API; MusicBrainz is used automatically if Spotify is unavailable
 - **System Audio Recording** permission (prompted on first enable)
+- **Genre API** — deploy the included Cloudflare Worker (`api/`) for public releases; the app falls back to MusicBrainz client-side if the proxy is unreachable
 
 ## Supported now-playing sources
 
@@ -41,14 +41,25 @@ open EQfi.xcodeproj
 
 Build and run from Xcode (⌘R).
 
-### 2. Spotify (optional)
+### 2. Genre API (required for public releases)
 
-1. Create an app at [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Add redirect URI: `http://127.0.0.1:8888/callback` (do **not** use `localhost`)
-3. Development Mode requires **Premium** on the account that owns the app
-4. Enter **Client ID** and **Client Secret** in EQfi → **Spotify Settings**
+The macOS app calls a hosted genre proxy — Spotify credentials never ship in the app.
 
-If Spotify fails, EQfi falls back to **MusicBrainz** for genre tags.
+```bash
+cd api
+npm install
+cp .dev.vars.example .dev.vars   # add Spotify + EQFI_API_KEY
+npx wrangler kv namespace create GENRE_CACHE
+# update wrangler.toml with KV IDs
+npm run deploy
+```
+
+Then set in `EQfi/Config/Constants.swift`:
+
+- `Constants.GenreProxy.baseURL` → your worker URL
+- `Constants.GenreProxy.apiKey` → same value as `EQFI_API_KEY`
+
+See [api/README.md](api/README.md) for full deployment steps.
 
 ### 3. Ollama
 
@@ -68,23 +79,27 @@ EQfi auto-detects installed models matching `llama3.2`, `llama3`, or `llama`.
 ## Architecture
 
 ```
-Now Playing (AppleScript) → Genre (Spotify / MusicBrainz) → EQ (Ollama) → System Audio EQ Engine
+Now Playing (AppleScript) → Genre Proxy API → EQ (Ollama) → System Audio EQ Engine
+                                    ↓ (if proxy fails)
+                              MusicBrainz (client fallback)
 ```
 
 | Layer | Technology |
 |-------|------------|
 | UI | SwiftUI menu bar extra |
-| AI pipeline | Spotify API, MusicBrainz, Ollama |
+| Genre lookup | Cloudflare Worker (Spotify + MusicBrainz), client MusicBrainz fallback |
+| AI pipeline | Ollama |
 | Audio | Core Audio tap, AVAudioEngine, AVAudioUnitEQ |
 
 ## Project structure
 
 ```
 EQfi/
+├── api/              Genre proxy (Cloudflare Worker)
 ├── App/              App entry, dependency injection
 ├── Audio/            System-wide EQ engine and tap
 ├── Orchestrator/     AI pipeline coordination
-├── Services/         Spotify, Ollama, now playing, etc.
+├── Services/         Genre proxy client, Ollama, now playing, etc.
 ├── UI/               Menu bar and manual EQ views
 └── ViewModels/       SwiftUI state
 ```

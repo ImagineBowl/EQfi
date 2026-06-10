@@ -9,20 +9,20 @@ import Foundation
 
 /// Executes a single AI pipeline pass for one track.
 struct EQPipelineRunner {
-    private let spotify: SpotifyServiceProtocol
+    private let primaryGenreLookup: PrimaryGenreLookupProtocol
     private let genreFallback: GenreLookupFallbackProtocol
     private let profileCache: EQProfileCacheProtocol
     private let ollama: OllamaServiceProtocol
     private let audioDevice: AudioDeviceServiceProtocol
 
     init(
-        spotify: SpotifyServiceProtocol,
+        primaryGenreLookup: PrimaryGenreLookupProtocol,
         genreFallback: GenreLookupFallbackProtocol,
         profileCache: EQProfileCacheProtocol,
         ollama: OllamaServiceProtocol,
         audioDevice: AudioDeviceServiceProtocol
     ) {
-        self.spotify = spotify
+        self.primaryGenreLookup = primaryGenreLookup
         self.genreFallback = genreFallback
         self.profileCache = profileCache
         self.ollama = ollama
@@ -44,18 +44,18 @@ struct EQPipelineRunner {
 
     private func resolveGenres(for track: TrackInfo) async -> [String] {
         if track.isPodcast {
-            PipelineLogger.spotifyGenresResolved(["podcast"], cached: false)
+            PipelineLogger.genreProxyGenresResolved(["podcast"], cached: false)
             return ["podcast"]
         }
 
-        PipelineLogger.spotifyLookupStarted(title: track.title, artist: track.artist)
+        PipelineLogger.genreProxyLookupStarted(title: track.title, artist: track.artist)
         do {
-            return try await spotify.fetchGenre(for: track)
+            return try await primaryGenreLookup.fetchGenre(for: track)
         } catch {
-            PipelineLogger.spotifyFailed(error.localizedDescription)
+            PipelineLogger.genreProxyFailed(error.localizedDescription)
         }
 
-        PipelineLogger.spotifyExhaustedTryingFallback()
+        PipelineLogger.genreProxyExhaustedTryingFallback()
         PipelineLogger.musicBrainzLookupStarted(title: track.title, artist: track.artist)
         do {
             return try await genreFallback.fetchGenre(for: track)

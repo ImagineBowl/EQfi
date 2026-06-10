@@ -49,6 +49,14 @@ final class SystemAudioEQService: SystemEQServiceProtocol, @unchecked Sendable {
         }
     }
 
+    /// Returns live band gains from the running engine, if available.
+    func currentAppliedProfile() async -> EQManualProfile? {
+        guard #available(macOS 14.2, *) else { return nil }
+        return await MainActor.run {
+            typedEngine()?.currentAppliedProfile()
+        }
+    }
+
     private func ensureEngineRunning() async throws {
         let needsFullStart = await MainActor.run { () -> Bool in
             guard let engine = typedEngine() else { return true }

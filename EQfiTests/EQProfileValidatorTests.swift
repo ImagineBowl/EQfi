@@ -36,9 +36,9 @@ final class EQProfileValidatorTests: XCTestCase {
         XCTAssertEqual(profile.bandGains, [0, 0, 0, 0, 0])
     }
 
-    func testGainAboveMaxThrows() {
+    func testGainAboveAIMaxThrows() {
         let raw = """
-        {"sub_bass":13.0,"bass":0,"midrange":0,"presence":0,"brilliance":0}
+        {"sub_bass":6.0,"bass":0,"midrange":0,"presence":0,"brilliance":0}
         """
         XCTAssertThrowsError(try validator.validate(rawResponse: raw, presetName: "Hot")) { error in
             guard case OllamaError.validationFailed = error else {
@@ -48,9 +48,9 @@ final class EQProfileValidatorTests: XCTestCase {
         }
     }
 
-    func testGainBelowMinThrows() {
+    func testGainBelowAIMinThrows() {
         let raw = """
-        {"sub_bass":0,"bass":0,"midrange":-13.0,"presence":0,"brilliance":0}
+        {"sub_bass":0,"bass":0,"midrange":-6.0,"presence":0,"brilliance":0}
         """
         XCTAssertThrowsError(try validator.validate(rawResponse: raw, presetName: "Cold"))
     }
