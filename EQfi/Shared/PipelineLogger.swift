@@ -11,7 +11,7 @@ import os
 /// Structured console logging for the AI EQ pipeline.
 enum PipelineLogger {
     private static let pipeline = Logger(subsystem: "com.Imaginebowl.EQfi", category: "Pipeline")
-    private static let spotify = Logger(subsystem: "com.Imaginebowl.EQfi", category: "Spotify")
+    private static let genreProxy = Logger(subsystem: "com.Imaginebowl.EQfi", category: "GenreProxy")
     private static let musicBrainz = Logger(subsystem: "com.Imaginebowl.EQfi", category: "MusicBrainz")
     private static let ollama = Logger(subsystem: "com.Imaginebowl.EQfi", category: "Ollama")
 
@@ -19,21 +19,21 @@ enum PipelineLogger {
         pipeline.info("Now playing: '\(title, privacy: .public)' by '\(artist, privacy: .public)' [\(source, privacy: .public)]")
     }
 
-    static func spotifyLookupStarted(title: String, artist: String) {
-        spotify.info("Looking up genres for '\(title, privacy: .public)' by '\(artist, privacy: .public)'")
+    static func genreProxyLookupStarted(title: String, artist: String) {
+        genreProxy.info("Looking up genres for '\(title, privacy: .public)' by '\(artist, privacy: .public)'")
     }
 
-    static func spotifyGenresResolved(_ genres: [String], cached: Bool) {
+    static func genreProxyGenresResolved(_ genres: [String], cached: Bool) {
         let label = cached ? "cache" : "api"
-        spotify.info("Spotify genres (\(label, privacy: .public)): \(genres.joined(separator: ", "), privacy: .public)")
+        genreProxy.info("Genre proxy (\(label, privacy: .public)): \(genres.joined(separator: ", "), privacy: .public)")
     }
 
-    static func spotifyFailed(_ message: String) {
-        spotify.error("Spotify lookup failed: \(message, privacy: .public)")
+    static func genreProxyFailed(_ message: String) {
+        genreProxy.error("Genre proxy lookup failed: \(message, privacy: .public)")
     }
 
-    static func spotifyExhaustedTryingFallback() {
-        spotify.notice("Spotify unavailable — trying MusicBrainz fallback")
+    static func genreProxyExhaustedTryingFallback() {
+        genreProxy.notice("Genre proxy unavailable — trying MusicBrainz fallback")
     }
 
     static func musicBrainzLookupStarted(title: String, artist: String) {

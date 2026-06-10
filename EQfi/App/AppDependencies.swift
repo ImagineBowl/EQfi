@@ -11,15 +11,12 @@ import Foundation
 @MainActor
 struct AppDependencies {
     let viewModel: EQViewModel
-    let keychain: KeychainServiceProtocol
 
     /// Creates and connects all application dependencies.
     static func make() -> AppDependencies {
-        let keychain = KeychainService()
         let genreCache = GenreCache()
         let profileCache = EQProfileCache()
-        let tokenManager = SpotifyTokenManager(keychain: keychain)
-        let spotify = SpotifyService(tokenManager: tokenManager, cache: genreCache)
+        let genreProxy = GenreProxyService(cache: genreCache)
         let musicBrainz = MusicBrainzService(cache: genreCache)
         let nowPlaying = NowPlayingService()
         let ollamaModelResolver = OllamaModelResolver()
@@ -28,7 +25,7 @@ struct AppDependencies {
         let audioDevice = AudioDeviceService()
         let orchestrator = EQOrchestrator(
             nowPlaying: nowPlaying,
-            spotify: spotify,
+            primaryGenreLookup: genreProxy,
             genreFallback: musicBrainz,
             profileCache: profileCache,
             ollama: ollama,
@@ -41,16 +38,17 @@ struct AppDependencies {
         let systemEQMonitor = SystemEQStatusMonitor(systemEQ: systemEQ)
         let ollamaMonitor = OllamaStatusMonitor(modelResolver: ollamaModelResolver)
         let modePreference = ModePreferenceService()
+        let updateChecker = UpdateCheckerService()
         let viewModel = EQViewModel(
             nowPlaying: nowPlaying,
             orchestrator: orchestrator,
             systemEQ: systemEQ,
             modePreference: modePreference,
-            keychain: keychain,
             manualViewModel: manualVM,
             systemEQMonitor: systemEQMonitor,
-            ollamaMonitor: ollamaMonitor
+            ollamaMonitor: ollamaMonitor,
+            updateChecker: updateChecker
         )
-        return AppDependencies(viewModel: viewModel, keychain: keychain)
+        return AppDependencies(viewModel: viewModel)
     }
 }

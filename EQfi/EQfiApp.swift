@@ -13,10 +13,7 @@ struct EQfiApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            MenuBarView(
-                viewModel: appDelegate.dependencies.viewModel,
-                keychain: appDelegate.dependencies.keychain
-            )
+            MenuBarView(viewModel: appDelegate.dependencies.viewModel)
         } label: {
             MenuBarIconView(viewModel: appDelegate.dependencies.viewModel)
         }

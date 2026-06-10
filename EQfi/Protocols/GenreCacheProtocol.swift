@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Caches Spotify genre lookups in memory and persistent storage.
+/// Caches genre lookups in memory and persistent storage.
 protocol GenreCacheProtocol: Sendable {
     /// Returns cached genres for a track key, if present.
     func genre(forKey key: String) -> [String]?

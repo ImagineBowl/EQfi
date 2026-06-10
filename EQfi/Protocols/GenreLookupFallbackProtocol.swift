@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Secondary genre lookup when Spotify is unavailable.
+/// Secondary genre lookup when the genre proxy is unavailable.
 protocol GenreLookupFallbackProtocol: Sendable {
     /// Looks up genre tags for the given track.
     func fetchGenre(for track: TrackInfo) async throws -> [String]

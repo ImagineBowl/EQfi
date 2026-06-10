@@ -29,7 +29,7 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
 
     init(
         nowPlaying: NowPlayingServiceProtocol,
-        spotify: SpotifyServiceProtocol,
+        primaryGenreLookup: PrimaryGenreLookupProtocol,
         genreFallback: GenreLookupFallbackProtocol,
         profileCache: EQProfileCacheProtocol,
         ollama: OllamaServiceProtocol,
@@ -39,7 +39,7 @@ final class EQOrchestrator: EQOrchestratorProtocol, @unchecked Sendable {
         self.nowPlaying = nowPlaying
         self.systemEQ = systemEQ
         self.pipeline = EQPipelineRunner(
-            spotify: spotify,
+            primaryGenreLookup: primaryGenreLookup,
             genreFallback: genreFallback,
             profileCache: profileCache,
             ollama: ollama,

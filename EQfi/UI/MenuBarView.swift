@@ -11,32 +11,23 @@ import SwiftUI
 /// Root menubar popover content driven by the main ViewModel.
 struct MenuBarView: View {
     @Bindable var viewModel: EQViewModel
-    let keychain: KeychainServiceProtocol
     @State private var showWhyEQ = false
 
     var body: some View {
-        Group {
-            if viewModel.showOnboarding {
-                SpotifyOnboardingView(viewModel: viewModel, keychain: keychain)
-            } else {
-                mainContent
-            }
-        }
-        .padding(16)
-        .frame(width: panelWidth)
-        .fixedSize(horizontal: true, vertical: false)
-        .id(panelIdentity)
-        .onAppear { NSApplication.shared.activate(ignoringOtherApps: true) }
+        mainContent
+            .padding(16)
+            .frame(width: panelWidth)
+            .fixedSize(horizontal: true, vertical: false)
+            .id(panelIdentity)
+            .onAppear { NSApplication.shared.activate(ignoringOtherApps: true) }
     }
 
     private var panelWidth: CGFloat {
-        if viewModel.showOnboarding { return 380 }
-        return viewModel.mode == .manual ? 520 : 320
+        viewModel.mode == .manual ? 520 : 320
     }
 
     private var panelIdentity: String {
-        if viewModel.showOnboarding { return "onboarding" }
-        return viewModel.mode == .manual ? "manual" : "ai"
+        viewModel.mode == .manual ? "manual" : "ai"
     }
 
     private var mainContent: some View {
@@ -48,6 +39,7 @@ struct MenuBarView: View {
             }
             if viewModel.mode == .ai { aiSection } else { manualSection }
             statusSection
+            updateSection
             footerSection
         }
         .popover(isPresented: $showWhyEQ) {
@@ -214,10 +206,29 @@ struct MenuBarView: View {
         .disabled(isPipelineBusy)
     }
 
+    @ViewBuilder
+    private var updateSection: some View {
+        if let update = viewModel.availableUpdate {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("EQfi \(update.version) is available")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+                HStack {
+                    Button("Download") { viewModel.openAvailableUpdate() }
+                        .font(.caption)
+                    Button("Dismiss") { viewModel.dismissAvailableUpdate() }
+                        .font(.caption)
+                }
+            }
+        } else {
+            Text("Version \(viewModel.appVersion)")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+    }
+
     private var footerSection: some View {
         HStack {
-            Button("Spotify Settings") { viewModel.reopenSpotifySetup() }
-                .font(.caption)
             Spacer()
             Button("Quit") { NSApplication.shared.terminate(nil) }
         }
